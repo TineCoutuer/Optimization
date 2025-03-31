@@ -77,7 +77,7 @@ end
 
 %% Optimization Setup
 x0 = [0.05, 2.5];      % Initial guess [t, r]
-lb = [0.005, 1];       % Lower bounds [t_min, r_min]
+lb = [0.01, 1];       % Lower bounds [t_min, r_min]
 ub = [0.5, 10];        % Upper bounds [t_max, r_max]
 
 
@@ -89,8 +89,8 @@ opt_path = []; % Store optimization path
 
 %% Parameters algorithm
 alpha = 1e-3;           % learning rate
-penalty = 1e6;          % penalty multiplier
-tol = 1e-6;             % tolerance for convergence
+penalty = 1e10;          % penalty multiplier
+tol = 1e-9;             % tolerance for convergence
 max_iter = 500;         % max number of iterations
 
 for iter = 1:max_iter
@@ -104,7 +104,7 @@ for iter = 1:max_iter
 
     %difference gradient
     grad = zeros(1, length(x0));
-    h = 1e-6;
+    h = 1e-2;
     for i = 1:length(x0)
         x_temp = x0;
         x_temp(i) = x_temp(i) + h;
@@ -131,7 +131,11 @@ for iter = 1:max_iter
 
 end
 
+%% CHeck if constraints are satisfied
 
+[c_final, ~] = nonlcon(x, W_base, E, sigma_allow, disp_limit, node_coords, members);
+disp('Constraint values at optimum (should all be ≤ 0):');
+disp(c_final);
 
 
 
