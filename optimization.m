@@ -38,6 +38,9 @@ members = [...
 %% Plot b ridge
 plot_bridge;
 
+
+
+
 %% Define Design Space for Contour Plot
 t_vals = linspace(0.02, 0.3, 50);   % Thickness range (m)
 r_vals = linspace(1.0, 5.0, 50);    % Height-to-width ratio range
@@ -80,37 +83,86 @@ options = optimoptions('fmincon', 'Display', 'iter', 'Algorithm', 'sqp', ...
 global opt_path;
 opt_path = []; % Store optimization path
 
-[x_opt, mass_opt] = fmincon(@(x)objective(x, W_base, rho), x0, [], [], [], [], lb, ub, ...
-    @(x)nonlcon(x, W_base, E, sigma_allow, disp_limit, node_coords, members), options);
+%% Parameters algorithm
+alpha = 1e-3;           % learning rate
+penalty = 1e6;          % penalty multiplier
+tol = 1e-6;
+max_iter = 500;         % max number of iterations
 
-%% Results
-disp('----------------------------------');
-disp(['Optimal thickness t = ', num2str(x_opt(1)), ' m']);
-disp(['Optimal height/width ratio r = ', num2str(x_opt(2))]);
-disp(['Minimum mass = ', num2str(mass_opt), ' kg']);
-disp('----------------------------------');
+for iter = 1:max_iter
+    % obj and constraints
+    f = objective(x0,W_base,rho);
+    [c,~] = nonlcon(x0, W_base, E, sigma_allow, disp_limit,node_coords,members);
+
+    % penalty
+    penalty_term  = sum((max(0,c)).^2);
+    F = f + penalty* penalty_term;
+
+    %difference gradient
+    grad = zeros(1, length(x0));
+    h = 1e-6;
+    for i = 1:length(x0)
+        x_temp = x0;
+        x_temp(i) = x_temp(i) + h;
+
+        f_temp = objective(x_temp, W_base, rho);
+        [c_temp, ~] = nonlcon(x_temp, W_base, E, sigma_allow, disp_limit, node_coords, members);
+        F_temp = f_temp + penalty * sum((max(0, c_temp)).^2);
+
+        grad(i) = (F_temp - F) / h;
+    end
+    
+    % gradient descent step
+    x_new = x0 - alpha*grad;
+
+    %project into bounds
+    x_new = max(min(x_new,ub), lb);
+
+    %check convergence
+    if norm(x_new - x0) < tol
+        break;
+    end
+
+    x = x_new;
+
+end
 
 
 
-% %% Final Contour Plot
-% figure;
-% hold on;
-% contourf(T, R, MASS, 20, 'LineColor', 'none');
-% colorbar;
-% xlabel('Thickness t (m)');
-% ylabel('Height-to-width ratio r');
-% title('Mass Contour Plot with Optimization Path');
-% 
-% % Overlay Constraint Boundaries
-% contour(T, R, CONSTRAINT_VIOLATION, [1 1], 'k-', 'LineWidth', 2);
-% 
-% % Overlay Optimization Path
-% if ~isempty(opt_path)
-%     plot(opt_path(:,1), opt_path(:,2), 'wo-', 'MarkerFaceColor', 'w', 'LineWidth', 2);
-% end
-% 
-% % Plot Final Optimized Point
-% plot(x_opt(1), x_opt(2), 'ro', 'MarkerSize', 10, 'MarkerFaceColor', 'r');
-% text(x_opt(1) + 0.01, x_opt(2), 'Optimal Point', 'FontSize', 10, 'Color', 'r');
-% 
-% hold off;
+
+
+
+
+
+
+%% Final result
+mass_final = objective(x, W_base, rho);
+disp('--- GRADIENT DESCENT RESULT ---');
+fprintf('Optimal thickness t: %.4f m\n', x(1));
+fprintf('Optimal height/width ratio r: %.4f\n', x(2));
+fprintf('Minimum mass: %.4f kg\n', mass_final);
+
+
+
+%% Final Contour Plot
+figure;
+hold on;
+contourf(T, R, MASS, 20, 'LineColor', 'none');
+colorbar;
+xlabel('Thickness t (m)');
+ylabel('Height-to-width ratio r');
+title('Mass Contour Plot with Optimization Path');
+
+% Overlay Constraint Boundaries
+contour(T, R, CONSTRAINT_VIOLATION, [1 1], 'k-', 'LineWidth', 2);
+
+% Overlay Optimization Path
+if ~isempty(opt_path)
+    plot(opt_path(:,1), opt_path(:,2), 'wo-', 'MarkerFaceColor', 'w', 'LineWidth', 2);
+end
+
+% Plot Final Optimized Point
+plot(x(1), x(2), 'ro', 'MarkerSize', 10, 'MarkerFaceColor', 'r');
+text(x(1) + 0.01, x(2), 'Optimal Point', 'FontSize', 10, 'Color', 'r');
+
+hold off;
