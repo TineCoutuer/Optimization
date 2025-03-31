@@ -1,15 +1,9 @@
 clc; clear; close all;
 
 
-%% using a Gradient-Based Constrained Nonlinear Optimization Algorithm
+%% using a Gradient-Based Constrained Nonlinear Optimization Algorithm (wint penalization)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Properties
-rho = 7850;        % kg/m^3
-E = 210e9;         % Pa
-sigma_allow = 250e6; % Pa
-W_base = 0.3;      % m (constant width)
-disp_limit = 0.02; % m (20 mm max displacement)
 
 %% Nodes and Members
 node_coords = [...
@@ -33,6 +27,16 @@ members = [...
     3 6;
     3 7;
     4 7];
+
+
+%% Properties
+rho = 7850;        % kg/m^3
+E = 210e9;         % Pa
+sigma_allow = 250e6; % Pa
+W_base = 0.3;      % m (constant width)
+disp_limit = 0.02; % m (20 mm max displacement)
+
+
 
 
 %% Plot b ridge
@@ -86,7 +90,7 @@ opt_path = []; % Store optimization path
 %% Parameters algorithm
 alpha = 1e-3;           % learning rate
 penalty = 1e6;          % penalty multiplier
-tol = 1e-6;
+tol = 1e-6;             % tolerance for convergence
 max_iter = 500;         % max number of iterations
 
 for iter = 1:max_iter
@@ -132,9 +136,6 @@ end
 
 
 
-
-
-
 %% Final result
 mass_final = objective(x, W_base, rho);
 disp('--- GRADIENT DESCENT RESULT ---');
@@ -145,24 +146,27 @@ fprintf('Minimum mass: %.4f kg\n', mass_final);
 
 
 %% Final Contour Plot
-figure;
-hold on;
-contourf(T, R, MASS, 20, 'LineColor', 'none');
-colorbar;
-xlabel('Thickness t (m)');
-ylabel('Height-to-width ratio r');
-title('Mass Contour Plot with Optimization Path');
-
-% Overlay Constraint Boundaries
-contour(T, R, CONSTRAINT_VIOLATION, [1 1], 'k-', 'LineWidth', 2);
-
-% Overlay Optimization Path
-if ~isempty(opt_path)
-    plot(opt_path(:,1), opt_path(:,2), 'wo-', 'MarkerFaceColor', 'w', 'LineWidth', 2);
-end
-
-% Plot Final Optimized Point
-plot(x(1), x(2), 'ro', 'MarkerSize', 10, 'MarkerFaceColor', 'r');
-text(x(1) + 0.01, x(2), 'Optimal Point', 'FontSize', 10, 'Color', 'r');
-
-hold off;
+% figure;
+% hold on;
+% 
+% % Plot mass contours
+% contourf(T, R, MASS, 30, 'LineColor', 'none');
+% colormap('parula');
+% colorbar;
+% xlabel('Thickness t (m)');
+% ylabel('Height-to-width ratio r');
+% title('Mass Contour with Optimization Path');
+% 
+% % Constraint boundaries overlay
+% contour(T, R, CONSTRAINT_VIOLATION, [1 1], 'k--', 'LineWidth', 2);
+% 
+% % If you store path, plot it here
+% if exist('opt_path', 'var') && ~isempty(opt_path)
+%     plot(opt_path(:,1), opt_path(:,2), 'w.-', 'LineWidth', 2, 'MarkerSize', 10);
+% end
+% 
+% % Plot final point
+% plot(x(1), x(2), 'rx', 'MarkerSize', 12, 'LineWidth', 2);
+% text(x(1) + 0.01, x(2), 'Optimal Point', 'FontSize', 10, 'Color', 'r');
+% 
+% hold off;
