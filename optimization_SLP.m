@@ -55,12 +55,13 @@ max_iter = 50;
 tol = 1e-6;
 
 for iter = 1:max_iter
-    % Evaluate objective and constraints
-    f0 = objective(x_slp, W_base, rho);
-    grad_f = finite_diff(@(x) objective(x, W_base, rho), x_slp);
-
+    %  objective and constraints linearization
+    
+    f0 = objective(x_slp, W_base, rho); %objective at current x
+    grad_f = finite_diff(@(x) objective(x, W_base, rho), x_slp); 
+ 
     [c, ~] = nonlcon(x_slp, W_base, E, sigma_allow, disp_limit, node_coords, members);
-    A = zeros(length(c), length(x_slp));
+    A = zeros(length(c), length(x_slp)); % jacobian constraints
     for j = 1:length(c)
         A(j,:) = finite_diff(@(x) nonlcon(x, W_base, E, sigma_allow, disp_limit, node_coords, members), x_slp, j);
     end
@@ -68,7 +69,7 @@ for iter = 1:max_iter
     % LP setup: minimize grad_f * dx
     % subject to: A*dx + c <= 0, bounds, and trust region
     
-    % Bound deltas
+     % trust region formulation
     dx_lb = max(lb - x_slp, -trust_region);
     dx_ub = min(ub - x_slp, trust_region);
 
@@ -85,7 +86,7 @@ for iter = 1:max_iter
         break;
     end
 
-    % Update
+    % feasibility check
     dx = max(min(dx, dx_ub), dx_lb);
     
     x_new = x_slp + dx(1,:);
@@ -99,8 +100,9 @@ for iter = 1:max_iter
     end
 
 
-
+    
     fprintf('Iter %d → x = [%.4f, %.4f], f = %.2f\n', iter, x_new(1), x_new(2), objective(x_new, W_base, rho));
+    % convergence check
 
     if norm(x_new - x_slp) < tol
         % fprintf('Step size: %.10f\n', norm(x_new - x_slp));
@@ -110,7 +112,7 @@ for iter = 1:max_iter
     x_slp = x_new;
 end
 
-% Final results
+% final results
 mass_slp = objective(x_slp, W_base, rho);
 [c_slp, ~] = nonlcon(x_slp, W_base, E, sigma_allow, disp_limit, node_coords, members);
 
@@ -120,6 +122,10 @@ fprintf('Optimal height/width ratio r: %.4f\n', x_slp(2));
 fprintf('Minimum mass: %.4f kg\n', mass_slp);
 disp('Constraint values at optimum (should all be ≤ 0):');
 disp(c_slp);
+
+
+
+
 
 
 % 
