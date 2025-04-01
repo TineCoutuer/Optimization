@@ -115,21 +115,6 @@ fprintf('Optimal height/width ratio r: %.4f\n', x(2));
 fprintf('Minimum mass: %.4f kg\n', mass_final);
 
 
-% Grid for contour
-[t_grid, r_grid] = meshgrid(linspace(0.01, 0.5, 100), linspace(0.1, 10, 100));
-mass_grid = zeros(size(t_grid));
-constr_grid = zeros(size(t_grid));
-
-for i = 1:size(t_grid,1)
-    for j = 1:size(t_grid,2)
-        x_test = [t_grid(i,j), r_grid(i,j)];
-        mass_grid(i,j) = objective(x_test, W_base, rho);
-
-        % Show only one constraint (e.g., max stress) for overlay
-        [c_temp, ~] = nonlcon(x_test, W_base, E, sigma_allow, disp_limit, node_coords, members);
-        constr_grid(i,j) = max(c_temp);  % shows if any constraint violated
-    end
-end
 
 %% Final Contour Plot
 % figure;
