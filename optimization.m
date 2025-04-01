@@ -45,34 +45,6 @@ plot_bridge;
 
 
 
-%% Define Design Space for Contour Plot
-t_vals = linspace(0.02, 0.3, 50);   % Thickness range (m)
-r_vals = linspace(1.0, 5.0, 50);    % Height-to-width ratio range
-[T, R] = meshgrid(t_vals, r_vals);
-MASS = zeros(size(T));              % Objective function (mass)
-CONSTRAINT_VIOLATION = zeros(size(T)); % Constraint map
-
-for i = 1:numel(T)
-    t = T(i);
-    r = R(i);
-    
-    % Compute Mass
-    W = W_base;
-    H = r * W_base;
-    A = 2*W*t + (H-2*t)*t;
-    L_A = 7;
-    L_B = sqrt((L_A/2)^2 + H^2);
-    MASS(i) = rho * A * (5*L_A + 6*L_B);
-    
-    % Check Constraint Violations
-    [c, ~] = nonlcon([t, r], W_base, E, sigma_allow, disp_limit, node_coords, members);
-    
-    if any(c > 0)
-        CONSTRAINT_VIOLATION(i) = 1; % If violated
-    else
-        CONSTRAINT_VIOLATION(i) = 0;
-    end
-end
 
 
 %% Optimization Setup
@@ -80,12 +52,6 @@ x0 = [0.05, 2.5];      % Initial guess [t, r]
 lb = [0.01, 1];       % Lower bounds [t_min, r_min]
 ub = [0.5, 10];        % Upper bounds [t_max, r_max]
 
-
-options = optimoptions('fmincon', 'Display', 'iter', 'Algorithm', 'sqp', ...
-    'OutputFcn', @optimize_plot_callback); % Call output function to store iterations
-
-global opt_path;
-opt_path = []; % Store optimization path
 
 %% Parameters algorithm
 alpha = 1e-3;           % learning rate
