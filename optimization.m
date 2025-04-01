@@ -61,7 +61,7 @@ max_iter = 500;         % max number of iterations
 
 for iter = 1:max_iter
     % obj and constraints
-    f = objective(x0,W_base,rho);
+    f = objective(x,W_base,rho);
     [c,~] = nonlcon(x0, W_base, E, sigma_allow, disp_limit,node_coords,members);
 
     % penalty
