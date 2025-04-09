@@ -5,53 +5,23 @@ clc; clear; close all;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%% Nodes and Members
-node_coords = [...
-     0    0;
-     7    0;
-    14    0;
-    21    0;
-    3.5   6;
-   10.5   6;
-   17.5   6];
 
-members = [...
-    1 2;
-    2 3;
-    3 4;
-    5 6;
-    6 7;
-    1 5;
-    2 5;
-    2 6;
-    3 6;
-    3 7;
-    4 7];
 
 
 %% Properties
-rho = 7850;        % kg/m^3
-E = 210e9;         % Pa
-sigma_allow = 250e6; % Pa
-W_base = 0.3;      % m (constant width)
-disp_limit = 0.02; % m (20 mm max displacement)
-
-
+params;
 
 
 %% Plot b ridge
 plot_bridge;
 
 
-
-
-
-
 %% Optimization Setup
-x0 = [0.05, 2.5];      % Initial guess [t, r]
-lb = [0.01, 1];       % Lower bounds [t_min, r_min]
-ub = [0.5, 10];        % Upper bounds [t_max, r_max]
-
+x0 = [0.015, 2.5];      % Initial guess [t, r]
+lb = [0.005, 1];       % Lower bounds [t_min, r_min]
+ub = [0.03, 10];        % Upper bounds [t_max, r_max]
+% thickness between 5 and 30 mm
+% r = H/W
 
 %% Parameters algorithm
 alpha = 1e-3;           % learning rate
@@ -63,7 +33,7 @@ for iter = 1:max_iter
     % obj and constraints
   
     f = objective(x0,W_base,rho);
-    [c,~] = nonlcon(x0, W_base, E, sigma_allow, disp_limit,node_coords,members);
+    [c,~] = nonlcon(x0, W_base, E,L, sigma_allow, disp_limit,F_ref,node_coords,members,safety_fac);
 
     % penalty
     penalty_term  = sum((max(0,c)).^2);
@@ -77,7 +47,7 @@ for iter = 1:max_iter
         x_temp(i) = x_temp(i) + h;
 
         f_temp = objective(x_temp, W_base, rho);
-        [c_temp, ~] = nonlcon(x_temp, W_base, E, sigma_allow, disp_limit, node_coords, members);
+        [c_temp, ~] = nonlcon(x_temp, W_base, E,L, sigma_allow, disp_limit, F_ref,node_coords, members,safety_fac);
         F_temp = f_temp + penalty * sum((max(0, c_temp)).^2);
 
         grad(i) = (F_temp - F) / h;
@@ -100,7 +70,7 @@ end
 
 %% CHeck if constraints are satisfied
 
-[c_final, ~] = nonlcon(x, W_base, E, sigma_allow, disp_limit, node_coords, members);
+[c_final, ~] = nonlcon(x, W_base, E, L, sigma_allow, disp_limit, F_ref,node_coords, members,safe_fac);
 disp('Constraint values at optimum (should all be ≤ 0):');
 disp(c_final);
 
