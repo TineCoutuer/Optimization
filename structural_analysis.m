@@ -1,4 +1,4 @@
-function [axial_forces, U_global, member_lengths] = structural_analysis(E, A, node_coords, members)
+function [axial_forces, U_global, member_lengths,R] = structural_analysis(E, A, node_coords, members)
     DOF = 2;
     num_nodes = size(node_coords, 1);
     total_DOF = DOF * num_nodes;
@@ -37,9 +37,9 @@ function [axial_forces, U_global, member_lengths] = structural_analysis(E, A, no
 
     % External loads
     F_global = zeros(total_DOF, 1);
-    F_global((4-1)*2 + 2) = -700e3;   % Node 5 vertical load
-    F_global((5-1)*2 + 2) = -1400e3;  % Node 6 vertical load
-    F_global((6-1)*2 + 2) = -700e3;   % Node 7 vertical load
+    F_global((5-1)*2 + 2) = -700e3;   % Node 5 (left top)
+    F_global((6-1)*2 + 2) = -1400e3;  % Node 6 (middle top)
+    F_global((7-1)*2 + 2) = -700e3;   % Node 7 (right top)
 
     % Boundary conditions
     fixed_DOFs = [1, 2, (4-1)*2 + 2]; % P1 (x,y) and P4 (y)
@@ -73,4 +73,7 @@ function [axial_forces, U_global, member_lengths] = structural_analysis(E, A, no
 
         axial_forces(i) = (E * A / L) * [-cx, -cy, cx, cy] * u_member;
     end
+    R = K_global * U_global - F_global;  % Full reaction force vector (including supports)
+
+    
 end
