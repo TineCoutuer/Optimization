@@ -7,7 +7,7 @@ clf, hold off, clear
 
 % Load parameters
 params;
-W_base = 0.2;
+
 % Combinations of design variables t and r 
 t = [0.00005:0.01:0.35];
 r = [0.1:0.1:10.0];
@@ -52,7 +52,7 @@ hold on, grid on;
 
 % Plot constraint boundaries (solid lines) and infeasible regions (dashed)
 contour(t, r, g1, [0.0 0.0], 'r', 'LineWidth', 2)            % stress tension constraint
-contour(t, r, g1, [8.0 8.0],'r--') % Infeasible region
+contour(t, r, g1, [8.0 8.0],'r--') % Infeasible regiony
 
 contour(t, r, g2, [0.0 0.0], 'b', 'LineWidth', 2)            % displacement tension constraint
 contour(t, r, g2, [8.0 8.0],'b--')   % Infeasible region
@@ -99,11 +99,6 @@ legend('smass contours', ...
 
 hold off;
 
-%figure;
-%contour(t, r, g1, [300.0 100.0 20.0 5.0 1.0 0.5 0.2 0.0 -0.2 -0.5 -0.8 -0.9 -0.95 -0.99 -0.995 -0.999 -0.9995 -1.0 ],'ShowText','on')  
-%contour(t, r, g2, [300.0 100.0 20.0 5.0 1.0 0.5 0.2 0.0 -0.2 -0.5 -0.8 -0.9 -0.95 -0.99 -0.995 -0.999 -0.9995 -1.0 ],'ShowText','on')  
-%contour(t, r, g3, [300.0 100.0 20.0 5.0 1.0 0.5 0.2 0.0 -0.2 -0.5 -0.8 -0.9 -0.95 -0.99 -0.995 -0.999 -0.9995 -1.0 ],'ShowText','on')            % stress constraint
-%contour(t, r, g4,'ShowText','on')  
-%contour(t, r, g5, 'ShowText','on')  
+
 
 %end 

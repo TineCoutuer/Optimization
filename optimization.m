@@ -17,7 +17,7 @@ plot_bridge;
 
 
 %% Optimization Setup
-x0 = [0.4, 1];      % Initial guess [t, r]
+x0 = [0.04, 4];      % Initial guess [t, r]
 lb = [0.005, 1];       % Lower bounds [t_min, r_min]
 ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 % thickness between 5 and 30 mm
@@ -25,13 +25,18 @@ ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 
 %% Parameters algorithm
 alpha = 1e-3;           % learning rate
-penalty = 1e10;          % penalty multiplier
+penalty = 1e20;          % penalty multiplier
 tol = 1e-9;             % tolerance for convergence
-max_iter = 500;         % max number of iterations
+max_iter = 5;         % max number of iterations
+
+
+% Store the points for visualization
+iter_points = []; 
+iter_points(end+1, :) = x0;
 
 for iter = 1:max_iter
     % obj and constraints
-  
+
     f = objective(x0,W_base,rho);
     [c,~] = nonlcon(x0, W_base, E,L, sigma_allow, disp_limit,F_ref,node_coords,members,safety_fac);
 
@@ -52,7 +57,7 @@ for iter = 1:max_iter
 
         grad(i) = (F_temp - F) / h;
     end
-    
+
     % gradient descent step
     x_new = x0 - alpha*grad;
 
@@ -63,7 +68,7 @@ for iter = 1:max_iter
     if norm(x_new - x0) < tol
         break;
     end
-    
+    iter_points(end+1, :) = x_new;
     x = x_new;
 
 end
@@ -84,7 +89,8 @@ fprintf('Optimal thickness t: %.4f m\n', x(1));
 fprintf('Optimal height/width ratio r: %.4f\n', x(2));
 fprintf('Minimum mass: %.4f kg\n', mass_final);
 
-
+%Plot points
+plot_optimization_contour(iter_points)
 
 %% Final Contour Plot
 % figure;

@@ -3,7 +3,7 @@ figure
 hold on
 axis equal
 grid on
-disp("test")
+
 x = [0 7 14 21 3.5 10.5 17.5];
 y = [0 0 0 0 6 6 6];
 % Plot nodes

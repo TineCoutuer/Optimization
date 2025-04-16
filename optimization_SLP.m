@@ -20,8 +20,10 @@ plot_bridge;
 
 
 
-x_slp = [0.4, 1.0];   % Initial guess [t, r]
-% x_slp = [0.12, 4];
+%x_slp = [0.4, 1.0];   % Initial guess [t, r]
+x_slp = [0.06, 8];
+
+
 lb = [0.005, 1];       % Lower bounds [t_min, r_min]
 ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 % thickness between 5 and 30 mm
@@ -30,6 +32,10 @@ ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 trust_region = 0.1;   % Max allowed change per iteration
 max_iter = 50;
 tol = 1e-6;
+
+% Store the points for visualization
+iter_points = []; 
+iter_points(end+1, :) = x_slp;
 
 for iter = 1:max_iter
     %  objective and constraints linearization
@@ -50,12 +56,16 @@ for iter = 1:max_iter
     dx_lb = max(lb - x_slp, -trust_region);
     dx_ub = min(ub - x_slp, trust_region);
 
+    % Enforce that lower bound is not greater than upper bound
+    invalid_bounds = dx_lb > dx_ub;
+    dx_lb(invalid_bounds) = dx_ub(invalid_bounds);  % set dx_lb = dx_ub if invalid    
+
     fprintf('x = [%f, %f]\n', x_slp(1), x_slp(2));
     fprintf('dx_lb = [%f, %f], dx_ub = [%f, %f]\n', dx_lb(1), dx_lb(2), dx_ub(1), dx_ub(2));
 
     % Solve LP using linprog
     fprintf('lb = [%.4f, %.4f], ub = [%.4f, %.4f]\n', lb(1), lb(2), ub(1), ub(2));
-    options = optimoptions('linprog','Display','none');
+    options = optimoptions('linprog','Display','iter');
     [dx, fval, exitflag] = linprog(grad_f, A, -c, [], [], dx_lb, dx_ub, options);
 
     if exitflag ~= 1
@@ -85,7 +95,7 @@ for iter = 1:max_iter
         % fprintf('Step size: %.10f\n', norm(x_new - x_slp));
         break;
     end
-
+    iter_points(end+1, :) = x_new;
     x_slp = x_new;
 end
 
@@ -100,7 +110,8 @@ fprintf('Minimum mass: %.4f kg\n', mass_slp);
 disp('Constraint values at optimum (should all be ≤ 0):');
 disp(c_slp);
 
-
+%Plot points
+plot_optimization_contour(iter_points)
 
 
 
@@ -131,3 +142,4 @@ disp(c_slp);
 % fprintf('Minimum mass: %.4f kg\n', mass_fmincon);
 % disp('Constraint values at optimum (should all be ≤ 0):');
 % disp(c_fmincon);
+
