@@ -17,7 +17,7 @@ plot_bridge;
 
 
 %% Optimization Setup
-x0 = [0.015, 2.5];      % Initial guess [t, r]
+x0 = [0.4, 1];      % Initial guess [t, r]
 lb = [0.005, 1];       % Lower bounds [t_min, r_min]
 ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 % thickness between 5 and 30 mm
@@ -70,7 +70,7 @@ end
 
 %% CHeck if constraints are satisfied
 
-[c_final, ~] = nonlcon(x, W_base, E, L, sigma_allow, disp_limit, F_ref,node_coords, members,safe_fac);
+[c_final, ~] = nonlcon(x, W_base, E, L, sigma_allow, disp_limit, F_ref,node_coords, members,safety_fac);
 disp('Constraint values at optimum (should all be ≤ 0):');
 disp(c_final);
 

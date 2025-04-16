@@ -3,12 +3,10 @@ E = 210e9;         % Pa
 sigma_allow = 250e6; % Pa
 W_base = 0.3;      % m (constant width)
 disp_limit = 0.02; % m (20 mm max displacement)
-% Recommended Width: 0.05 m - 0.5m
-% Recommended Height: 0.1m - 2.0 m
-lb = [0.003, 1];       % Lower bounds [t_min, r_min]
-ub = [0.05, 10];        % Upper bounds [t_max, r_max]
+lb = [0.005, 1];       % Lower bounds [t_min, r_min]
+ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 safety_fac = 1;     % Safety factor
-F_ref = 1800000; %N (just to scale constraints)
+F_ref = 2800; %N double the induvidual node load (just to scale constraints)
 L = 7; %delete
 
 %% Nodes and Members

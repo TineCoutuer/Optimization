@@ -9,7 +9,7 @@ clf, hold off, clear
 params;
 W_base = 0.2;
 % Combinations of design variables t and r 
-t = [0.00005:0.01:0.35];
+t = [0.00005:0.01:0.5];
 r = [0.1:0.1:10.0];
 
 %[axial_forces, U_global, member_lengths] = structural_analysis(E, A, node_coords, members);
@@ -46,19 +46,19 @@ end
 
 % Contour plot of scaled spring problem
 
-contour(t, r, fobj,[0.0 200.0 800.0 1400.0 2e3 4e3 8e3 16e3 24e3 32e3 50e3 70e3 10e4 12e4 16e4 20e4 25e4 40e4 80e4 12e5],'ShowText','off') % mass contour
+contour(t, r, fobj,[0.0 200.0 800.0 1400.0 2e3 4e3 8e3 16e3 32e3 10e4 25e4 40e4 80e4 12e5],'ShowText','on') % mass contour
 
 hold on, grid on;
 
 % Plot constraint boundaries (solid lines) and infeasible regions (dashed)
 contour(t, r, g1, [0.0 0.0], 'r', 'LineWidth', 2)            % stress tension constraint
-contour(t, r, g1, [8.0 8.0],'r--') % Infeasible region
+contour(t, r, g1, [0.1 0.1],'r--') % Infeasible region
 
 contour(t, r, g2, [0.0 0.0], 'b', 'LineWidth', 2)            % displacement tension constraint
-contour(t, r, g2, [8.0 8.0],'b--')   % Infeasible region
+contour(t, r, g2, [0.1 0.1],'b--')   % Infeasible region
 
 contour(t, r, g3, [0.0 0.0], 'm', 'LineWidth', 2)            % displacement compression constraint
-contour(t, r, g3, [8.0 8.0],'m--')   % Infeasible region
+contour(t, r, g3, [4.0 4.0],'m--')   % Infeasible region
 
 contour(t, r, g4, [0.0 0.0], 'g', 'LineWidth', 2)            % buckling x constraint
 contour(t, r, g4, [0.4 0.4],'g--')   % Infeasible region
@@ -67,11 +67,11 @@ contour(t, r, g5, [0.0 0.0], 'c', 'LineWidth', 2)            % buckling y constr
 contour(t, r, g5, [0.2 0.2],'c--')   % Infeasible region
 
 % g6 - Width/Thickness ratio
-contour(t, r, g6, [0.0 0.0], 'LineWidth', 2,'Color', [0.5 0 0.5])
-contour(t, r, g6, [0.1 0.1], '--', 'Color', [0.5 0 0.5])
+contour(t, r, g6, [0.0 0.0], 'y', 'LineWidth', 2)
+contour(t, r, g6, [0.1 0.1], 'y--')
 
 % g7 - Height/Thickness ratio
-contour(t, r, g7, [0.0 0.0], 'LineWidth', 2,'Color', [1 0.5 0])   % orange
+contour(t, r, g7, [0.0 0.0], [1 0.5 0], 'LineWidth', 2)   % orange
 contour(t, r, g7, [0.1 0.1], '--', 'Color', [1 0.5 0])
 
 % g8 - Minimum Wedge Height
@@ -79,8 +79,8 @@ contour(t, r, g8, [0.0 0.0], 'k', 'LineWidth', 2)
 contour(t, r, g8, [0.1 0.1], 'k--')
 
 % g9 - Area constraint
-contour(t, r, g9, [0.0 0.0], 'y','LineWidth', 2)   % purple
-contour(t, r, g9, [0.03 0.03], 'y--')
+contour(t, r, g9, [0.0 0.0], [0.5 0 0.5], 'LineWidth', 2)   % purple
+contour(t, r, g9, [0.1 0.1], '--', 'Color', [0.5 0 0.5])
 
 
 % Labels and legend
