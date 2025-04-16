@@ -49,7 +49,7 @@ contour3(t, r, g1, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Stress Constraint (g1)');
 title('Stress Constraint (g1) Visualization');
 
@@ -64,7 +64,7 @@ contour3(t, r, g2, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Displacement Tension Constraint (g2)');
 title('Displacement Tension Constraint (g2) Visualization');
 
@@ -79,7 +79,7 @@ contour3(t, r, g3, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Displacement Compression Constraint (g3)');
 title('Displacement Compression Constraint (g3) Visualization');
 
@@ -94,7 +94,7 @@ contour3(t, r, g4, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Buckling x Constraint (g4)');
 title('Buckling x Constraint (g4) Visualization');
 
@@ -109,7 +109,7 @@ contour3(t, r, g5, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Buckling y Constraint (g5)');
 title('Buckling y Constraint (g5) Visualization');
 
@@ -124,7 +124,7 @@ contour3(t, r, g6, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Width-Thickness Ratio Constraint (g6)');
 title('Width-Thickness Ratio Constraint (g6) Visualization');
 
@@ -139,7 +139,7 @@ contour3(t, r, g7, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Height-Thickness Ratio Constraint (g7)');
 title('Height-Thickness Ratio Constraint (g7) Visualization');
 
@@ -154,7 +154,7 @@ contour3(t, r, g8, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Wedge Height Constraint (g8)');
 title('Wedge Height Constraint (g8) Visualization');
 
@@ -169,6 +169,6 @@ contour3(t, r, g9, [0 0], 'k', 'LineWidth', 2);
 hold off;
 
 xlabel('Material thickness t (m)');
-ylabel('Heigth/Width ratio r');
+ylabel('Height/Width ratio r');
 zlabel('Pos. Area Constraint (g9)');
 title('Pos. Area Constraint (g9) Visualization');
