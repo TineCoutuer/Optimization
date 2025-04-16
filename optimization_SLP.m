@@ -31,7 +31,7 @@ ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 
 trust_region = 0.1;   % Max allowed change per iteration
 max_iter = 50;
-tol = 1e-6;
+tol =  1e-3;
 
 % Store the points for visualization
 iter_points = []; 

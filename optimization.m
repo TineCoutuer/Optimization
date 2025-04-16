@@ -27,7 +27,7 @@ to_normalized = @(x_phys) (x_phys - lb) ./ (ub - lb);
 %% Parameters algorithm
 alpha = 5e-3;           % learning rate
 penalty = 1e20;          % penalty multiplier
-tol = 1e-9;             % tolerance for convergence
+tol = 1e-3;             % tolerance for convergence
 max_iter = 1000;         % max number of iterations
 
 x0_norm = to_normalized(x0);  % safer initial guess

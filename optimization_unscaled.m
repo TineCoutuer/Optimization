@@ -25,7 +25,7 @@ ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 %% Parameters algorithm
 alpha = 1e-3;           % learning rate
 penalty = 1e20;          % penalty multiplier
-tol = 1e-9;             % tolerance for convergence
+tol =  1e-3;             % tolerance for convergence
 max_iter = 1000;         % max number of iterations
 
 
