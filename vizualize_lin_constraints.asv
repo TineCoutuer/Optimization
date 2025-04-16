@@ -1,0 +1,117 @@
+% Code base from Exercise 7.1
+% Comparison of nonlinear objective and constraints and the linearized
+% constraints
+
+% Initialization
+clf, hold off
+format long
+
+% Design point, x0, where problem is linearized to be given outside springw7ex1.
+x0 = [0.06, 8];
+
+params;
+t = 0.0005:0.001:0.10;
+r = 0.1:0.1:10.0;
+
+n_r = length(r);
+n_t = length(t);
+
+fobj      = zeros(n_r, n_t);
+flingrid  = zeros(n_r, n_t);
+
+g1  = zeros(n_r, n_t);
+g2  = zeros(n_r, n_t);
+g3  = zeros(n_r, n_t);
+g4  = zeros(n_r, n_t);
+g5  = zeros(n_r, n_t);
+g6  = zeros(n_r, n_t);
+g7  = zeros(n_r, n_t);
+g8  = zeros(n_r, n_t);
+
+g1lin = zeros(n_r, n_t);
+g2lin = zeros(n_r, n_t);
+g3lin = zeros(n_r, n_t);
+g4lin = zeros(n_r, n_t);
+g5lin = zeros(n_r, n_t);
+g6lin = zeros(n_r, n_t);
+g7lin = zeros(n_r, n_t);
+g8lin = zeros(n_r, n_t);
+
+% Matrix of output values for combinations of design variables D and d: 
+for j = 1:length(r)
+    for i = 1:length(t)
+        x = [t(i), r(j)];
+ 	     % Real objective function
+        f = objective(x, W_base, rho);
+        % Grid value of objective function:
+        fobj(j,i) = f; 
+        
+        % Linearized objective function
+        flin = flin_func(x,x0);
+        % Grid value of objective function:
+        flingrid(j,i) = flin; 
+        
+        
+        % Real constraints:
+        g = nonlcon(x, W_base, E, L, sigma_allow, disp_limit, F_ref, node_coords, members, safety_fac);
+        % Grid values of constraints:
+        g1(j,i) = g(1);    % stress constraint
+        g2(j,i) = g(2);    % displacement tension constraint
+        g3(j,i) = g(3);    % displacement compression constraint
+        g4(j,i) = g(4);    % buckling x constraint
+        g5(j,i) = g(5);    % buckling y constraint
+        g6(j,i) = g(6);    % W/t const
+        g7(j,i) = g(7);    % H/t const
+        g8(j,i) = g(8);    % Wedge constraint
+        
+        % Linearized constraints:
+        glin = glin_func(x,x0);
+        % Grid values of linearized constraints:
+        g1lin(j,i) = glin(1);    % stress constraint
+        g2lin(j,i) = glin(2);    % displacement tension constraint
+        g3lin(j,i) = glin(3);    % displacement compression constraint
+        g4lin(j,i) = glin(4);    % buckling x constraint
+        g5lin(j,i) = glin(5);    % buckling y constraint
+        g6lin(j,i) = glin(6);    % W/t const
+        g7lin(j,i) = glin(7);    % H/t const
+        g8lin(j,i) = glin(8);    % Wedge constraint
+
+
+    end
+end
+
+
+contour(t, r, fobj)
+xlabel('Thickness (m)'), ylabel('Width/Height ratio'), ...
+   title('Real (-) and linearized (--) truss mass optimization problem')
+hold on
+contour(t, r, flingrid,'--')
+contour(t, r, g1, [0.0 0.0],'r'); contour(t, r, g1lin, [0.0 0.0],'r--')
+contour(t, r, g2, [0.0 0.0],'b'); contour(t, r, g2lin, [0.0 0.0],'b--')
+contour(t, r, g3, [0.0 0.0],'m'); contour(t, r, g3lin, [0.0 0.0],'m--')
+contour(t, r, g4, [0.0 0.0],'g'); contour(t, r, g4lin, [0.0 0.0],'g--')
+contour(t, r, g5, [0.0 0.0],'c'); contour(t, r, g5lin, [0.0 0.0],'c--')
+contour(t, r, g6, [0.0 0.0],'Color', [0.5 0 0.5]); contour(t, r, g6lin, [0.0 0.0],'Color', [0.5 0 0.5])
+contour(t, r, g7, [0.0 0.0],'Color', [1 0.5 0]); contour(t, r, g7lin, [0.0 0.0],'Color', [1 0.5 0])
+contour(t, r, g8, [0.0 0.0],'y'); contour(t, r, g8lin, [0.0 0.0],'y')
+
+
+grid
+
+% Plot marker in initial design point:
+plot(x0(1),x0(2),'o',!);
+
+legend('mass contours', ...
+'g1', 'g1 lin', ...
+'g2', 'g2 lin', ...
+'g3', 'g3 lin', ...
+'g4', 'g4 lin', ...
+'g5', 'g5 lin', ...
+'g6', 'g6 lin', ...
+'g7', 'g7 lin', ...
+'g8', 'g8 lin', ...
+'linearization point');
+
+clear all
+
+%end 

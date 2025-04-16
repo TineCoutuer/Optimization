@@ -39,10 +39,10 @@ iter_points(end+1, :) = x_slp;
 
 for iter = 1:max_iter
     %  objective and constraints linearization
-    
+
     f0 = objective(x_slp, W_base, rho); %objective at current x
     grad_f = finite_diff(@(x) objective(x, W_base, rho), x_slp); 
- 
+
     [c, ~] = nonlcon(x_slp, W_base, E, L, sigma_allow, disp_limit, F_ref,node_coords, members,safety_fac);
     A = zeros(length(c), length(x_slp)); % jacobian constraints
     for j = 1:length(c)
@@ -51,7 +51,7 @@ for iter = 1:max_iter
 
     % LP setup: minimize grad_f * dx
     % subject to: A*dx + c <= 0, bounds, and trust region
-    
+
      % trust region formulation
     dx_lb = max(lb - x_slp, -trust_region);
     dx_ub = min(ub - x_slp, trust_region);
@@ -75,7 +75,7 @@ for iter = 1:max_iter
 
     % feasibility check
     dx = max(min(dx, dx_ub), dx_lb);
-    
+
     x_new = x_slp + dx(1,:);
     x_new = max(min(x_new, ub), lb); 
     [c_new, ~] = nonlcon(x_new, W_base, E, L, sigma_allow, disp_limit, F_ref,node_coords, members,safety_fac);
@@ -87,7 +87,7 @@ for iter = 1:max_iter
     end
 
 
-    
+
     fprintf('Iter %d → x = [%.4f, %.4f], f = %.2f\n', iter, x_new(1), x_new(2), objective(x_new, W_base, rho));
     % convergence check
 
@@ -111,35 +111,11 @@ disp('Constraint values at optimum (should all be ≤ 0):');
 disp(c_slp);
 
 %Plot points
+figure(2)
 plot_optimization_contour(iter_points)
 
+figure(3)
+visualize_linearized_constraints(x_slp)
 
 
-
-% 
-% fprintf('\n--- Running fmincon (SQP) ---\n');
-% 
-% x0 = [0.1, 2.0];  % Same initial guess as SLP
-% lb = [0.01, 1];
-% ub = [0.5, 10];
-% 
-% options = optimoptions('fmincon', ...
-%     'Algorithm', 'sqp', ...
-%     'Display', 'iter', ...
-%     'MaxIterations', 100, ...
-%     'OptimalityTolerance', 1e-9);
-% 
-% [x_fmincon, mass_fmincon] = fmincon(@(x) objective(x, W_base, rho), ...
-%     x0, [], [], [], [], lb, ub, ...
-%     @(x) nonlcon(x, W_base, E, sigma_allow, disp_limit, node_coords, members), ...
-%     options);
-% 
-% [c_fmincon, ~] = nonlcon(x_fmincon, W_base, E, sigma_allow, disp_limit, node_coords, members);
-% 
-% disp('--- fmincon (SQP) RESULT ---');
-% fprintf('Optimal thickness t: %.4f m\n', x_fmincon(1));
-% fprintf('Optimal height/width ratio r: %.4f\n', x_fmincon(2));
-% fprintf('Minimum mass: %.4f kg\n', mass_fmincon);
-% disp('Constraint values at optimum (should all be ≤ 0):');
-% disp(c_fmincon);
 

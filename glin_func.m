@@ -1,52 +1,56 @@
-function glin = glin(x, x0);
-% Two variable valve spring problem - Exercise 7.1 
-% Scaled linearized constraints. 
-% Input:
-%   x  : ([1x2] row) design variables (D and d)
-%   x0 : ([1x2] row) design point where constraints are linearized.
-% Output:
-%   glin  : [1x5] row of linearized constraint values.
-
-% Assignment of designvariables
-D = x(1);
-d = x(2);
-
-% Constant parameter values
-springparams2;
-
-% Nominal valve area:
-Av = Dv^2*pi/4;
-
-
-% Analysis of valve spring in linearization point x0:
-[svol,smass,bvol,matc,manc,Lmin,L2,k,F1,F2,Tau1,Tau2,freq1]=...
-    springanalysis1(x0(1),x0(2),L0,L1,n,E,G,rho,Dv,h,p1,p2,nm,ncamfac,nne,matp,bldp);
- 
-% Scaled constraints linearization point:
- 
-% Scaled length constraint
-g0(1) = Lmin/L2 - 1;
+function glin = glin_func(x, x0);
+    % Two variable valve spring problem - Exercise 7.1 
+    % Scaled linearized constraints. 
+    % Input:
+    %   x  : ([1x2] row) design variables (D and d)
+    %   x0 : ([1x2] row) design point where constraints are linearized.
+    % Output:
+    %   glin  : [1x8] row of linearized constraint values.
     
-% Scaled lowest force constraint
-F1min = Av * p1;
-g0(2) = 1 - F1/F1min;
+    % Assignment of designvariables
+    t = x(1);
+    r = x(2);
     
-% Scaled highest force constraint
-F2min = Av * p2;
-g0(3) = 1 - F2/F2min;
+    % Constant parameter values
+    params;
     
-% Scaled shear stress constraint
-Tau12max = 600*10^6;
-g0(4) = Tau2/Tau12max - 1;
+    g0 = nonlcon(x, W_base, E, L, sigma_allow, disp_limit, F_ref, node_coords, members, safety_fac);
+     
+    % Scaled constraints linearization point:
+     
+    % Gradient of objective function in linearization point:
+    dG = dgw(x0);
     
-% Scaled frequency constraint
-freq1lb = ncamfac * nm/2;
-g0(5) = 1 - freq1/freq1lb;
- 
-% Gradient of objective function in linearization point:
-dG = dgw7ex1(x0);
+    % Linearized constraints:
+    glin = g0(:)' + (dG * (x(:) - x0(:)))';
+        
+    %end 
 
-% Linearized constraints:
-glin = g0 + (dG*(x - x0)')';
+function dG = dgw(x);
+    % Derivatives of constraints
+    params;
+    % Input:
+    % x  : design point "[t, r]" for which derivatives are computed.
     
-%end 
+    % Output:
+    % dG  : [9X2] matrix with gradients of 5 constraints:
+    %        "[dg1dx1  dg1dx2
+    %          ....     ....
+    %          dg9dx1  dg9dx2]" 
+    
+    % Note: Constant parameter values are read within the function
+    
+    % Forward finite diffence gradients of objective function and constraints
+    
+    % Finite diffence step
+    hx = 1.0e-8;
+    
+    % Constraint gradients 
+    gx = nonlcon(x, W_base, E, L, sigma_allow, disp_limit, F_ref, node_coords, members, safety_fac);
+    gx1plush = nonlcon([x(1)+hx, x(2)], W_base, E, L, sigma_allow, disp_limit, F_ref, node_coords, members, safety_fac);
+    gx2plush = nonlcon([x(1), x(2)+hx], W_base, E, L, sigma_allow, disp_limit, F_ref, node_coords, members, safety_fac);
+    dgdx1 = (gx1plush - gx)./hx;
+    dgdx2 = (gx2plush - gx)./hx;
+    dG = [dgdx1, dgdx2];
+    
+    % end 
