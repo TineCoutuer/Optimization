@@ -99,28 +99,4 @@ fprintf('Minimum mass: %.4f kg\n', mass_final);
 %Plot points
 plot_optimization_contour(iter_points)
 
-%% Final Contour Plot
-% figure;
-% hold on;
-% 
-% % Plot mass contours
-% contourf(T, R, MASS, 30, 'LineColor', 'none');
-% colormap('parula');
-% colorbar;
-% xlabel('Thickness t (m)');
-% ylabel('Height-to-width ratio r');
-% title('Mass Contour with Optimization Path');
-% 
-% % Constraint boundaries overlay
-% contour(T, R, CONSTRAINT_VIOLATION, [1 1], 'k--', 'LineWidth', 2);
-% 
-% % If you store path, plot it here
-% if exist('opt_path', 'var') && ~isempty(opt_path)
-%     plot(opt_path(:,1), opt_path(:,2), 'w.-', 'LineWidth', 2, 'MarkerSize', 10);
-% end
-% 
-% % Plot final point
-% plot(x(1), x(2), 'rx', 'MarkerSize', 12, 'LineWidth', 2);
-% text(x(1) + 0.01, x(2), 'Optimal Point', 'FontSize', 10, 'Color', 'r');
-% 
-% hold off;
+

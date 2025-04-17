@@ -4,14 +4,8 @@ clc; clear; close all;
 %% using a Gradient-Based Constrained Nonlinear Optimization Algorithm (wint penalization)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
 %% Properties and Nodes
 params;
-
-
-
 
 
 %% Plot b ridge
