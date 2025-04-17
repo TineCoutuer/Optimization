@@ -15,7 +15,7 @@ plot_bridge;
 
 
 %% Optimization Setup
-x0 = [0.04, 8];      % Initial guess [t, r]
+x0 = [0.06, 8];      % Initial guess [t, r]
 lb = [0.005, 1];       % Lower bounds [t_min, r_min]
 ub = [0.03, 10];        % Upper bounds [t_max, r_max]
 % thickness between 5 and 30 mm
